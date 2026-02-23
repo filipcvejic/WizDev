@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LeadRelevance {
+  WEAK
+  HOT
+  NOT_RELEVANT
+  VERY_BIG
+}
+
+enum ConversationStage {
+  ASK_EMAIL
+  ASK_COMPANY
+  ASK_NEEDS
+  ASK_COMPANY_SIZE
+  ASK_BUDGET_TIMELINE
+  CLASSIFY_DONE
+}
+
+model Conversation {
+  id          String            @id @default(uuid())
+  email       String
+  companyName String
+  relevance   LeadRelevance
+
+  stage       ConversationStage @default(ASK_EMAIL)
+
+  // Optional but helpful for evaluation/debug
+  leadProfile Json?
+  transcript  Json?
+  calendlyUrl String?
+
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([email])
+}
